@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Demo</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <button onclick="queryData()">Draw Charts</button>
+    <form>
+    <input id="start" type="date" name="startDate"/>
+    <input id="end" type="date" name="endDate"/>
+    </form>
+    <button onclick="queryDataDates()">Draw Dated Charts</button>
+   
+  
+  
+    <div id="pie_div" style="width: 900px; height: 500px;"></div>
+    
+    <div id="bar_div" style="width: 900px; height: 500px;"></div>
+    
+    <script type="text/javascript">
+  
+        
+      google.charts.load("current", {packages:["corechart"]});
+      //google.charts.setOnLoadCallback(drawChart);
+     
+
+     function drawPieChart(result) {
+        var data = new google.visualization.arrayToDataTable(result);
+        var convert = ['unassigned','assigned','received','departed','arrived','started','completed','aborted','cancelled','deleted'];
+       
+        var optionsPie = {
+          title: "Job Status From <Date> to <Date>",
+          legend: { position: 'none' },
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('pie_div'));
+        chart.draw(data, optionsPie);
+
+      }
+
+      function drawBarChart(result) {
+        var data = new google.visualization.arrayToDataTable(result);
+
+        var optionsBar = {
+        title: "Job Status From <Date> to <Date>",
+        width: 600,
+        height: 400,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+
+      var chart = new google.visualization.BarChart(document.getElementById('bar_div'));
+      chart.draw(data, optionsBar);
+        
+
+      }
+
+      function queryDataDates(){
+
+        $start = $("#start").innerHTML;
+        $end = $("#end").innerHTML;
+        alert($start + $end);
+        $.getJSON({ 
+            url: "getDataDates.php",
+            success: function(result){
+
+              for(i = 0; i < result.length; i++){
+                result[i][0] = String(result[i][0]);
+              }
+              drawPieChart(result);
+              drawBarChart(result);
+        }});
+      } 
+
+      function queryData(){
+        $.getJSON({ 
+            url: "getData.php",
+            success: function(result){
+
+              for(i = 0; i < result.length; i++){
+                result[i][0] = String(result[i][0]);
+              }
+              drawPieChart(result);
+              drawBarChart(result);
+        }});
+      }
+
+            
+           
+     
+      
+      
+    </script>
+  </body>
+</html>
